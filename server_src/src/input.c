@@ -67,10 +67,11 @@ int master_sock(t_client **clients, int sockfd)
 	return new_client(clients, clifd);
 }
 
-int read_stuff(t_client **clients, fd_set *readfs, int *activity, int sockfd)
+int input(t_client **clients, fd_set *readfs, int *activity, int sockfd)
 {
 	t_client	*tmp;
 	t_response	*message;
+	t_client	*tmp_next;
 
 	tmp = *clients;
 	if (FD_ISSET(sockfd, readfs))
@@ -80,6 +81,7 @@ int read_stuff(t_client **clients, fd_set *readfs, int *activity, int sockfd)
 	}
 	while (*activity && tmp)
 	{
+		tmp_next = tmp->next;
 		if (FD_ISSET(tmp->fd, readfs))
 		{
 			message = get_input(clients, tmp);
@@ -87,7 +89,7 @@ int read_stuff(t_client **clients, fd_set *readfs, int *activity, int sockfd)
 			if (message)
 				action(clients, tmp, message);
 		}
-		tmp = tmp->next;
+		tmp = tmp_next;
 	}
 	return (1);
 }

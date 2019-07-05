@@ -25,7 +25,6 @@ typedef struct	s_reponse
 	char				buffer[BUFFER_LEN];
 	size_t				message_length;
 	int					activity;
-	char				in_the_list;
 }				t_response;
 
 typedef struct	s_client
@@ -56,9 +55,9 @@ int add_to_queue(t_client *client, t_response *response);
 int remove_response(t_response *message);
 
 /* input.c */
-int read_stuff(t_client **clients, fd_set *readfs, int *activity, int sockfd);
+int input(t_client **clients, fd_set *readfs, int *activity, int sockfd);
 
 /* output.c */
-int write_stuff(t_client **clients, fd_set *writefs, int *activity);
+int output(t_client **clients, fd_set *writefs, int *activity);
 
 #endif

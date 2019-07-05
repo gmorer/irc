@@ -4,3 +4,4 @@ server_src/obj
 client_src/obj
 server
 client
+.vscode

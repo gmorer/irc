@@ -2,23 +2,31 @@
 
 int send_data(t_client *client)
 {
-	int ret;
+	int			ret;
+	t_response	*response;
 
-	ret = write(client->fd, client->buffer, client->data_len);
+	response = client->queue[0];
+	// printf("sending %p for %p\n", response);
+	ret = write(client->fd, response->buffer, response->message_length);
 	if (ret == -1)
 		return (error("write: "));
-	client->need_write = 0;
+	response->activity -= 1;
+	if (!response->activity)
+		remove_response(response);
+	client->queue_len -= 1;
+	// printf("array addr %p\nnew addr %p\ncopied: %d\n", client->queue, &client->queue[1], sizeof(t_response) * client->queue_len);
+	memcpy(client->queue, &(client->queue[1]), sizeof(t_response) * client->queue_len);
 	return (1);
 }
 
-int write_stuff(t_client **clients, fd_set *writefs, int *activity)
+int output(t_client **clients, fd_set *writefs, int *activity)
 {
 	t_client *tmp;
 
 	tmp = *clients;
 	while (*activity && tmp)
 	{
-		if (tmp->need_write && FD_ISSET(tmp->fd, writefs))
+		if (tmp->queue_len && FD_ISSET(tmp->fd, writefs))
 		{
 			send_data(tmp);
 			*activity -= 1;
