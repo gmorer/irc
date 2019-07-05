@@ -1,6 +1,6 @@
 #include "server.h"
 
-int	new_client(t_client **head, int fd)
+int new_client(t_client **head, int fd)
 {
 	t_client *new_client;
 	t_client *tmp;
@@ -23,25 +23,20 @@ int	new_client(t_client **head, int fd)
 	return (1);
 }
 
-
 void remove_client(t_client *client)
 {
 	close(client->fd);
 }
 
-int rm_from_fd(t_client **head, int fd)
+int rm_client(t_client **head, t_client *client)
 {
-	t_client *tmp;
-
-	tmp = *head;
-	while (tmp->fd != fd && tmp->next)
-		tmp = tmp->next;
-	if (!tmp->next && tmp->fd != fd)
-		return (0);
-	if (tmp->previous)
-		tmp->previous->next = tmp->next;
-	if (tmp->next)
-		tmp->next->previous = tmp->previous;
-	remove_client(tmp);
-	free(tmp);
+	if (client->previous)
+		client->previous->next = client->next;
+	if (client->next)
+		client->next->previous = client->previous;
+	if (*head == client)
+		*head = NULL;
+	remove_client(client);
+	free(client);
+	return (1);
 }

@@ -18,7 +18,10 @@ CPATH = src/
 OPATH = obj/
 INC = $(addprefix -I , $(HPATH))
 CFILES = main.c \
-		 client.c
+		 client.c \
+		 input.c \
+		 output.c\
+		 loop.c
 OFILES = $(CFILES:.c=.o)
 HFILES = inc/server.h
 OBJ = $(addprefix $(OPATH), $(OFILES))
