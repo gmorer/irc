@@ -1,21 +1,57 @@
 #include "server.h"
 
-int get_input(t_client **head, t_client *client)
+t_response *get_input(t_client **head, t_client *client)
 {
-	int ret;
+	t_response	*new;
+	int			ret;
+	char		buffer[BUFFER_LEN];
 
-	ret = read(client->fd, client->buffer, BUFFER_LEN);
+	ret = read(client->fd, buffer, BUFFER_LEN);
 	if (ret < 0)
-		return (error("read: "));
+	{
+		error("read: ");
+		return (NULL);
+	}
 	if (ret == 0)
 	{
 		close(client->fd);
 		rm_client(head, client);
-		return (0);
+		return (NULL);
 	}
-	client->data_len = ret;
-	client->need_write = 1;
-	return (1);
+	if (!(new = malloc(sizeof(t_response))))
+		return (0);
+	bzero(new, sizeof(t_response));
+	memcpy(new->buffer, buffer, ret);
+	new->message_length = ret;
+	return (new);
+}
+
+// this fonction does not send message,  it just put the message in the queue
+void send_message(t_client **clients, t_response *message, char *channel)
+{
+	t_client *tmp;
+
+	tmp = (*clients);
+	while (tmp)
+	{
+		if (strncmp(tmp->channel, channel, CHANNEL_NAME_LEN) == 0)
+			add_to_queue(tmp, message);
+		tmp = tmp->next;
+	}
+}
+
+void action(t_client **clients, t_client *client, t_response *message)
+{
+	// TODO: commands
+	// if (message->buffer[0] == '/')
+	// {
+	// 	;
+	// }
+	// else
+	// {
+	// 	;
+	// }
+	send_message(clients, message, client->channel);
 }
 
 int master_sock(t_client **clients, int sockfd)
@@ -33,7 +69,8 @@ int master_sock(t_client **clients, int sockfd)
 
 int read_stuff(t_client **clients, fd_set *readfs, int *activity, int sockfd)
 {
-	t_client *tmp;
+	t_client	*tmp;
+	t_response	*message;
 
 	tmp = *clients;
 	if (FD_ISSET(sockfd, readfs))
@@ -45,8 +82,10 @@ int read_stuff(t_client **clients, fd_set *readfs, int *activity, int sockfd)
 	{
 		if (FD_ISSET(tmp->fd, readfs))
 		{
-			get_input(clients, tmp);
+			message = get_input(clients, tmp);
 			*activity -= 1;
+			if (message)
+				action(clients, tmp, message);
 		}
 		tmp = tmp->next;
 	}

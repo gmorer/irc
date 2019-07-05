@@ -27,14 +27,13 @@ int init_server()
 
 int main(int argc, char **argv)
 {
-	struct sockaddr_in cliaddr;
-	socklen_t clilen;
-	int sockfd;
-	int newfd;
+	int			sockfd;
+	t_client	*clients;
 
+	clients = NULL;
 	if ((sockfd = init_server()) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	printf("listening on port %d\n", PORT);
-	server_loop(sockfd);
+	server_loop(sockfd, &clients);
 	return (EXIT_SUCCESS);
 }

@@ -12,7 +12,7 @@
 
 NAME := server
 CC := gcc
-CFLAGS = -Werror -Wextra -Wall
+CFLAGS = -Werror -Wextra -Wall -g
 HPATH = inc/
 CPATH = src/
 OPATH = obj/
@@ -20,8 +20,9 @@ INC = $(addprefix -I , $(HPATH))
 CFILES = main.c \
 		 client.c \
 		 input.c \
-		 output.c\
-		 loop.c
+		 output.c \
+		 loop.c \
+		 response.c
 OFILES = $(CFILES:.c=.o)
 HFILES = inc/server.h
 OBJ = $(addprefix $(OPATH), $(OFILES))
@@ -35,7 +36,7 @@ $(NAME): $(OBJ)
 
 $(OPATH)%.o: $(CPATH)%.c $(HFILES)
 		mkdir -p $(OPATH)
-		$(CC) $(INC) $< -c -o $@
+		$(CC) -g $(INC) $< -c -o $@
 
 clean:
 		rm -f $(OBJ)
