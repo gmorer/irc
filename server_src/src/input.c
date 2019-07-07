@@ -22,36 +22,37 @@ t_response *get_input(t_client **head, t_client *client)
 		return (0);
 	bzero(new, sizeof(t_response));
 	memcpy(new->buffer, buffer, ret);
-	new->message_length = ret;
+	new->message_length = MIN(ret, BUFFER_LEN - 11); // 11: nick len + ": " len
 	return (new);
 }
 
 // this fonction does not send message,  it just put the message in the queue
-void send_message(t_client **clients, t_response *message, char *channel)
+void send_message(t_client **clients, t_client *client, t_response *message)
 {
 	t_client *tmp;
+	size_t	nick_len;
 
+	nick_len = strnlen(client->nick, 9);
 	tmp = (*clients);
+	memcpy(message->buffer + nick_len + 2, message->buffer, message->message_length);
+	memcpy(message->buffer, client->nick, nick_len);
+	memcpy(message->buffer + nick_len, ": ", 2);
+	message->message_length += nick_len + 2;
 	while (tmp)
 	{
-		if (strncmp(tmp->channel, channel, CHANNEL_NAME_LEN) == 0)
+		if (strncmp(tmp->channel, client->channel, CHANNEL_NAME_LEN) == 0)
 			add_to_queue(tmp, message);
 		tmp = tmp->next;
 	}
 }
 
-void action(t_client **clients, t_client *client, t_response *message)
+void execute_message(t_client **clients, t_client *client, t_response *message)
 {
 	// TODO: commands
-	// if (message->buffer[0] == '/')
-	// {
-	// 	;
-	// }
-	// else
-	// {
-	// 	;
-	// }
-	send_message(clients, message, client->channel);
+	if (message->buffer[0] == '/')
+		action(clients, client, message);
+	else
+		send_message(clients, client, message);
 }
 
 int master_sock(t_client **clients, int sockfd)
@@ -87,7 +88,7 @@ int input(t_client **clients, fd_set *readfs, int *activity, int sockfd)
 			message = get_input(clients, tmp);
 			*activity -= 1;
 			if (message)
-				action(clients, tmp, message);
+				execute_message(clients, tmp, message);
 		}
 		tmp = tmp_next;
 	}

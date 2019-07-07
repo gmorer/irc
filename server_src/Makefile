@@ -22,7 +22,8 @@ CFILES = main.c \
 		 input.c \
 		 output.c \
 		 loop.c \
-		 response.c
+		 response.c \
+		 action.c
 OFILES = $(CFILES:.c=.o)
 HFILES = inc/server.h
 OBJ = $(addprefix $(OPATH), $(OFILES))

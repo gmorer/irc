@@ -19,6 +19,15 @@
 #define NICK_LEN 9
 #define CHANNEL_NAME_LEN 9
 #define QUEUE_LEN 9
+#define MIN(a,b) (((a)<(b))?(a):(b))
+
+#define ACTION_ARRAY (t_action[]) {	\
+	{"who", action_who},			\
+	{"msg", action_msg},			\
+	{"nick", action_nick},			\
+	{"join", action_join},			\
+	{"leave", action_leave}			\
+}
 
 typedef struct	s_reponse
 {
@@ -38,6 +47,15 @@ typedef struct	s_client
 	struct s_client	*next;
 	struct s_client	*previous;
 }				t_client;
+
+typedef int (*action_fn)(t_client **clients, t_client *client, t_response *message);
+
+typedef struct	s_action
+{
+	char		*action_name;
+	action_fn	action;
+}				t_action;
+
 
 /* main.c */
 int error(char *msg);
@@ -59,5 +77,8 @@ int input(t_client **clients, fd_set *readfs, int *activity, int sockfd);
 
 /* output.c */
 int output(t_client **clients, fd_set *writefs, int *activity);
+
+/* action.c */
+int action(t_client **clients, t_client *client, t_response *message);
 
 #endif
