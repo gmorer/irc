@@ -27,7 +27,17 @@ int new_client(t_client **head, int fd)
 
 void remove_client(t_client *client)
 {
+	int index;
+
 	close(client->fd);
+	if (!client->queue_len)
+		return ;
+	index = 0;
+	while (index < client->queue_len)
+	{
+		remove_response(client->queue[index]);
+		index += 1;
+	}	
 }
 
 int rm_client(t_client **head, t_client *client)

@@ -68,9 +68,10 @@ int new_client(t_client **head, int fd);
 int rm_client(t_client **head, t_client *client);
 
 /* response.c */
-int add_to_reponses(t_response **head, t_response *response);
 int add_to_queue(t_client *client, t_response *response);
 int remove_response(t_response *message);
+void set_message(t_response *response, char *message, size_t message_len);
+int send_to_channel(t_client **clients, char *channel, t_response *message);
 
 /* input.c */
 int input(t_client **clients, fd_set *readfs, int *activity, int sockfd);

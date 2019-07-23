@@ -10,9 +10,7 @@ int send_data(t_client *client)
 	ret = write(client->fd, response->buffer, response->message_length);
 	if (ret == -1)
 		return (error("write: "));
-	response->activity -= 1;
-	if (!response->activity)
-		remove_response(response);
+	remove_response(response);
 	client->queue_len -= 1;
 	// printf("array addr %p\nnew addr %p\ncopied: %d\n", client->queue, &client->queue[1], sizeof(t_response) * client->queue_len);
 	memcpy(client->queue, &(client->queue[1]), sizeof(t_response) * client->queue_len);
