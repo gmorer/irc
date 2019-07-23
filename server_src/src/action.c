@@ -59,7 +59,7 @@ int action_join(t_client **clients, t_client *client, t_response *response)
     memcpy(client->channel, new_channel, new_channel_len);
 	bzero(response->buffer, sizeof(response->buffer));
 	response->message_length = snprintf(response->buffer, sizeof(response->buffer),
-		"* %s as joined the channel.\n", client->nick);
+		"* %s has joined the channel.\n", client->nick);
 	response->activity = 0;
 	send_to_channel(clients, client->channel, response);
     return (1);
@@ -82,10 +82,37 @@ int action_who(t_client **clients, t_client *client, t_response *response)
 }
 int action_msg(t_client **clients, t_client *client, t_response *response)
 {
-    (void*)clients;
-    (void*)client;
-    (void*)response;
-    printf("msg trigered\n");
+	char    *dest;
+    int     dest_len;
+    size_t  command_size;
+	t_client *tmp;
+	char tmp_buffer[BUFFER_LEN];
+
+    command_size = sizeof("/msg");
+    dest = next_word(response->buffer + command_size,
+        response->message_length - command_size, &dest_len);
+    if (!dest_len)
+        return (0); // error no name supplied
+    if (dest_len > NICK_LEN)
+        return (0); // error name too loong
+	tmp = *clients;
+	while (tmp && strncmp(dest, tmp->nick, dest_len))
+		tmp = tmp->next;
+	response->activity = 0;
+	if (tmp)
+	{
+		bzero(tmp_buffer, sizeof(tmp_buffer));
+		memcpy(tmp_buffer, dest + dest_len + 1, response->message_length - ((dest - response->buffer) + dest_len + 1));
+		response->message_length = snprintf(response->buffer, sizeof(response->buffer),
+			"* From %s: %s", client->nick, tmp_buffer);
+	}
+	else
+	{
+		bzero(response->buffer, sizeof(response->buffer));
+		memcpy(response->buffer, "Invalid nickname\n", sizeof("Invalid nickname\n"));
+		tmp = client;
+	}
+	add_to_queue(tmp, response);
     return (1);
 }
 
