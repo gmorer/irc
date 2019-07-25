@@ -34,9 +34,7 @@ int server_loop(int sockfd, t_client **clients)
 		if (activity < 0)
 			return (error("select: "));
 		output(clients, &writefds, &activity);
-		// write(1, "test1\n", 6);
 		input(clients, &readfds, &activity, sockfd);
-		// write(1, "test9\n", 6);
 
 	}
 	return (1);

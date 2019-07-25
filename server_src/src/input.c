@@ -1,6 +1,6 @@
 #include "server.h"
 
-t_response *get_input(t_client **head, t_client *client)
+t_response *get_input(t_client **clients, t_client *client)
 {
 	t_response	*new;
 	int			ret;
@@ -12,15 +12,18 @@ t_response *get_input(t_client **head, t_client *client)
 		error("read: ");
 		return (NULL);
 	}
-	if (ret == 0)
-	{
-		close(client->fd);
-		rm_client(head, client);
-		return (NULL);
-	}
 	if (!(new = malloc(sizeof(t_response))))
 		return (0);
 	bzero(new, sizeof(t_response));
+	if (ret == 0) // sometime it's not trigered
+	{
+		new->message_length = snprintf(new->buffer, sizeof(new->buffer),
+			"* %s as disconnected.\n", client->nick);
+		close(client->fd);
+		rm_client(clients, client);
+		send_to_channel(clients, "general", new);
+		return (NULL);
+	}
 	memcpy(new->buffer, buffer, ret);
 	new->message_length = MIN(ret, BUFFER_LEN - 11); // 11: nick len + ": " len
 	return (new);

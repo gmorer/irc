@@ -2,9 +2,8 @@
 
 int remove_response(t_response *response)
 {
-	// printf("freeing %p\n", response);
 	response->activity -= 1;
-	if (response->activity)
+	if (response->activity > 0)
 		return (0);
 	free(response);
 	return (1);
@@ -39,10 +38,20 @@ int send_to_channel(t_client **clients, char *channel, t_response *message)
 	t_client *tmp;
 
 	tmp = (*clients);
+	message->activity = 0;
 	while (tmp)
 	{
 		if (strncmp(tmp->channel, channel, CHANNEL_NAME_LEN) == 0)
 			add_to_queue(tmp, message);
 		tmp = tmp->next;
 	}
+	if (!message->activity)
+		remove_response(message);
+}
+
+int send_to_client(t_client *client, t_response *response, char *msg, size_t msg_len)
+{
+	set_message(response, msg, msg_len);
+	add_to_queue(client, response);
+	return (0);
 }

@@ -72,6 +72,7 @@ int add_to_queue(t_client *client, t_response *response);
 int remove_response(t_response *message);
 void set_message(t_response *response, char *message, size_t message_len);
 int send_to_channel(t_client **clients, char *channel, t_response *message);
+int send_to_client(t_client *client, t_response *response, char *msg, size_t msg_len);
 
 /* input.c */
 int input(t_client **clients, fd_set *readfs, int *activity, int sockfd);
