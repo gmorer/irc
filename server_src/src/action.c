@@ -75,24 +75,56 @@ int action_leave(t_client **clients, t_client *client, t_response *response)
 
 int action_who(t_client **clients, t_client *client, t_response *response)
 {
-	char	*channel;
-	size_t	command_size;
-	int		channel_len;
+	char		*channel;
+	size_t		command_size;
+	int			channel_len;
+	size_t		offset;
+	t_client	*tmp;
+	char		channel_tmp[CHANNEL_NAME_LEN];
 
+	bzero(channel_tmp, sizeof(channel_tmp));
 	command_size = sizeof("/who");
     channel = next_word(response->buffer + command_size,
-    response->message_length - command_size, &channel_len);
+    	response->message_length - command_size, &channel_len);
     if (!channel_len)
 	{
-		channel = client->channel;
-		channel_len = strlen(channel);
+		memcpy(channel_tmp, client->channel, strlen(client->channel));
+		channel_len = strlen(channel_tmp);
 	}
-    if (channel_len > NICK_LEN)
-		return (send_to_client(client, response, ERR_LONG_NAME, sizeof(ERR_LONG_NAME)));
-	/*
-		do the magic stuff
-	*/
-    printf("who trigered\n");
+	else
+	{
+		if (channel_len > CHANNEL_NAME_LEN)
+			return (send_to_client(client, response, ERR_LONG_NAME, sizeof(ERR_LONG_NAME)));
+		memcpy(channel_tmp, channel, channel_len);
+	}
+	bzero(response->buffer, sizeof(response->buffer));
+	offset = sizeof("* people in ");
+	memcpy(response->buffer, "* people in ", offset);
+	memcpy(response->buffer + offset, channel_tmp, channel_len);
+	offset += channel_len;
+	memcpy(response->buffer + offset, " : ", 3);
+	offset += 3;
+	tmp = *clients;
+	while (offset < BUFFER_LEN && tmp)
+	{
+		if (!strncmp(channel_tmp, tmp->channel, channel_len))
+		{
+			if (offset + 1 + strlen(tmp->nick) > BUFFER_LEN)
+				break;
+			response->buffer[offset + 1] = ' ';
+			memcpy(response->buffer + offset + 2, tmp->nick, strlen(tmp->nick));
+			offset += 1 + strlen(tmp->nick);
+		}
+		tmp = tmp->next;
+	}
+	if (offset < BUFFER_LEN)
+	{
+		response->buffer[offset + 1] = '\n';
+		offset += 1;
+	}
+	response->message_length = offset + 1;
+	response->activity = 0;
+	add_to_queue(client, response);
     return (1);
 }
 
