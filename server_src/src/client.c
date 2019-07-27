@@ -46,9 +46,17 @@ int rm_client(t_client **head, t_client *client)
 		client->previous->next = client->next;
 	if (client->next)
 		client->next->previous = client->previous;
+	else
+		(*head)->previous = client->previous;
 	if (*head == client)
-		*head = NULL;
+	{
+		if (client->next)
+			*head = client->next;
+		else
+			*head = NULL;
+	}
 	remove_client(client);
 	free(client);
+	printf("after remove: ");
 	return (1);
 }
