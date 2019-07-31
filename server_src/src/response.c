@@ -39,6 +39,11 @@ int send_to_channel(t_client **clients, char *channel, t_response *message)
 
 	tmp = (*clients);
 	message->activity = 0;
+	if (!channel[0])
+	{
+		remove_response(message);
+		return (0);
+	}
 	while (tmp)
 	{
 		if (strncmp(tmp->channel, channel, CHANNEL_NAME_LEN) == 0)
@@ -47,6 +52,7 @@ int send_to_channel(t_client **clients, char *channel, t_response *message)
 	}
 	if (!message->activity)
 		remove_response(message);
+	return (1);
 }
 
 int send_to_client(t_client *client, t_response *response, char *msg, size_t msg_len)

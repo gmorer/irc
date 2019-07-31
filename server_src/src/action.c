@@ -66,11 +66,13 @@ int action_join(t_client **clients, t_client *client, t_response *response)
 
 int action_leave(t_client **clients, t_client *client, t_response *response)
 {
-    (void*)clients;
-    (void*)client;
-    (void*)response;
-    printf("leave trigered\n");
-    return (1);
+	bzero(client->channel, sizeof(client->channel));
+	return (send_to_client(client, response, HELLO_MESSAGE, sizeof(HELLO_MESSAGE)));
+}
+
+int action_help(t_client **clients, t_client *client, t_response *response)
+{
+	return (send_to_client(client, response, HELP_MESSAGE, sizeof(HELP_MESSAGE)));
 }
 
 int action_who(t_client **clients, t_client *client, t_response *response)
@@ -88,6 +90,14 @@ int action_who(t_client **clients, t_client *client, t_response *response)
     	response->message_length - command_size, &channel_len);
     if (!channel_len)
 	{
+		if (!client->channel[0])
+		{
+			memcpy(response->buffer, ERR_NO_NAME, sizeof(ERR_NO_NAME));
+			response->message_length = sizeof(ERR_NO_NAME);
+			response->activity = 0;
+			add_to_queue(client, response);
+			return (1);
+		}
 		memcpy(channel_tmp, client->channel, strlen(client->channel));
 		channel_len = strlen(channel_tmp);
 	}
@@ -181,6 +191,5 @@ int action(t_client **clients, t_client *client, t_response *message)
             return actions[index].action(clients, client, message);
         index += 1;
     }
-	send_to_client(client, message, ERR_INV_COMMAND, sizeof(ERR_INV_COMMAND));
-    return (0);
+	return (send_to_client(client, message, ERR_INV_COMMAND, sizeof(ERR_INV_COMMAND)));
 }

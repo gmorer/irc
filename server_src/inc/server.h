@@ -11,7 +11,8 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#define DEFAULT_CHANNEL "general"
+#define HELLO_MESSAGE "* Hello on the irc /help for help\n"
+#define HELP_MESSAGE "List of the commands:\n/who [channel]: list users in the channel\n/msg user: send private message to user\n/nick newNick: change your nickname\n/join channel: join the channel\n/leave: leave the channel\n"
 #define DEFAULT_NICK "ghost"
 #define PORT 8080
 #define BACKLOG 10
@@ -26,7 +27,8 @@
 	{"msg", action_msg},			\
 	{"nick", action_nick},			\
 	{"join", action_join},			\
-	{"leave", action_leave}			\
+	{"leave", action_leave},			\
+	{"help", action_help}			\
 }
 
 typedef struct	s_reponse
@@ -64,8 +66,8 @@ int error(char *msg);
 int server_loop(int sockfd, t_client **clients);
 
 /*  client.c */
-int new_client(t_client **head, int fd);
 int rm_client(t_client **head, t_client *client);
+t_client *new_client(t_client **head, int fd);
 
 /* response.c */
 int add_to_queue(t_client *client, t_response *response);

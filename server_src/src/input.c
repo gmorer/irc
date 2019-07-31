@@ -41,12 +41,7 @@ void send_message(t_client **clients, t_client *client, t_response *message)
 	memcpy(message->buffer, client->nick, nick_len);
 	memcpy(message->buffer + nick_len, ": ", 2);
 	message->message_length += nick_len + 2;
-	while (tmp)
-	{
-		if (strncmp(tmp->channel, client->channel, CHANNEL_NAME_LEN) == 0)
-			add_to_queue(tmp, message);
-		tmp = tmp->next;
-	}
+	send_to_channel(clients, client->channel, message);
 }
 
 void execute_message(t_client **clients, t_client *client, t_response *message)
@@ -58,17 +53,24 @@ void execute_message(t_client **clients, t_client *client, t_response *message)
 		send_message(clients, client, message);
 }
 
-int master_sock(t_client **clients, int sockfd)
+void master_sock(t_client **clients, int sockfd)
 {
-	int clifd;
-	struct sockaddr_in cliaddr;
-	unsigned int addrlen;
+	t_client			*client;
+	t_response			*response;
+	int					clifd;
+	struct sockaddr_in	cliaddr;
+	unsigned int		addrlen;
 
 	addrlen = sizeof(struct sockaddr_in);
 	clifd = accept(sockfd, (struct sockaddr *)&cliaddr, &addrlen);
 	if (clifd < 0)
-		return (error("accept :"));
-	return new_client(clients, clifd);
+	{
+		error("accept :");
+		return ;
+	}
+	client = new_client(clients, clifd);
+	if ((response = malloc(sizeof(response))))
+		send_to_client(client, response, HELLO_MESSAGE, sizeof(HELLO_MESSAGE));
 }
 
 int input(t_client **clients, fd_set *readfs, int *activity, int sockfd)
