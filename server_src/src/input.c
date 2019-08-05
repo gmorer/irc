@@ -69,7 +69,7 @@ void master_sock(t_client **clients, int sockfd)
 		return ;
 	}
 	client = new_client(clients, clifd);
-	if ((response = malloc(sizeof(response))))
+	if ((response = malloc(sizeof(t_response))))
 		send_to_client(client, response, HELLO_MESSAGE, sizeof(HELLO_MESSAGE));
 }
 
