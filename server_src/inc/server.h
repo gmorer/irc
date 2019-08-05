@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 #define HELLO_MESSAGE "* Hello on the irc /help for help\n"
-#define HELP_MESSAGE "List of the commands:\n/who [channel]: list users in the channel\n/msg user: send private message to user\n/nick newNick: change your nickname\n/join channel: join the channel\n/leave: leave the channel\n"
+#define HELP_MESSAGE "List of the commands:\n/who [channel]: list users in the channel\n/msg user: send private message to user\n/nick newNick: change your nickname\n/join channel: join the channel\n/leave: leave the channel\n/list: list the channels\n"
 #define DEFAULT_NICK "ghost"
 #define PORT 8080
 #define BACKLOG 10
@@ -27,7 +27,8 @@
 	{"msg", action_msg},			\
 	{"nick", action_nick},			\
 	{"join", action_join},			\
-	{"leave", action_leave},			\
+	{"leave", action_leave},		\
+	{"list", action_list},			\
 	{"help", action_help}			\
 }
 

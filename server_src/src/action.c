@@ -70,6 +70,45 @@ int action_leave(t_client **clients, t_client *client, t_response *response)
 	return (send_to_client(client, response, HELLO_MESSAGE, sizeof(HELLO_MESSAGE)));
 }
 
+int action_list(t_client **clients, t_client *client, t_response *response)
+{
+	t_client	*tmp;
+	char		buffer[CHANNEL_NAME_LEN + 2];
+	int			offset;
+	int			tmp_off;
+
+	offset = 0;
+	bzero(response->buffer, sizeof(response->buffer));
+	tmp = *clients;
+	while (tmp)
+	{
+		if (tmp->channel[0])
+		{
+			tmp_off = snprintf(buffer, sizeof(buffer), " %s ", tmp->channel);
+			if (tmp_off + offset < sizeof(response->buffer) && !strnstr(response->buffer, buffer, tmp_off))
+			{
+				strcpy(response->buffer + offset, buffer); // index -1 if strlen = 0
+			offset += tmp_off - 1;
+			}
+		}
+		tmp = tmp->next;
+	}
+	if (!offset)
+	{
+		strcpy(response->buffer, ERR_NO_CHANNEL);
+		offset = sizeof(ERR_NO_CHANNEL);
+	}
+	else if (offset + 1 < sizeof(response->buffer))
+	{
+		response->buffer[offset] = '\n';
+		offset += 1;
+	}
+	response->message_length = offset;
+	response->activity = 0;
+	add_to_queue(client, response);
+	return (0);
+}
+
 int action_help(t_client **clients, t_client *client, t_response *response)
 {
 	return (send_to_client(client, response, HELP_MESSAGE, sizeof(HELP_MESSAGE)));
@@ -92,7 +131,7 @@ int action_who(t_client **clients, t_client *client, t_response *response)
 	{
 		if (!client->channel[0])
 		{
-			memcpy(response->buffer, ERR_NO_NAME, sizeof(ERR_NO_NAME));
+			strcpy(response->buffer, ERR_NO_NAME);
 			response->message_length = sizeof(ERR_NO_NAME);
 			response->activity = 0;
 			add_to_queue(client, response);
@@ -167,7 +206,7 @@ int action_msg(t_client **clients, t_client *client, t_response *response)
 	else
 	{
 		bzero(response->buffer, sizeof(response->buffer));
-		memcpy(response->buffer, ERR_INV_NICK, sizeof(ERR_INV_NICK));
+		strcpy(response->buffer, ERR_INV_NICK);
 		response->message_length = sizeof(ERR_INV_NICK);
 		tmp = client;
 	}

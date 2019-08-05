@@ -6,10 +6,10 @@ t_client *new_client(t_client **head, int fd)
 {
 	t_client	*client;
 	
-	client = malloc(sizeof(t_client));
+	client = malloc(sizeof(*client));
 	if (!client)
 		return (0);
-	bzero(client, sizeof(t_client));
+	bzero(client, sizeof(*client));
 	client->fd = fd;
 	strcpy(client->nick, DEFAULT_NICK);
 	if (!(*head))

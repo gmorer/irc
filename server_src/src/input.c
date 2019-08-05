@@ -12,9 +12,9 @@ t_response *get_input(t_client **clients, t_client *client)
 		error("read: ");
 		return (NULL);
 	}
-	if (!(new = malloc(sizeof(t_response))))
+	if (!(new = malloc(sizeof(*new))))
 		return (0);
-	bzero(new, sizeof(t_response));
+	bzero(new, sizeof(*new));
 	if (ret == 0) // sometime it's not trigered
 	{
 		new->message_length = snprintf(new->buffer, sizeof(new->buffer),
@@ -61,7 +61,7 @@ void master_sock(t_client **clients, int sockfd)
 	struct sockaddr_in	cliaddr;
 	unsigned int		addrlen;
 
-	addrlen = sizeof(struct sockaddr_in);
+	addrlen = sizeof(cliaddr);
 	clifd = accept(sockfd, (struct sockaddr *)&cliaddr, &addrlen);
 	if (clifd < 0)
 	{
@@ -69,7 +69,7 @@ void master_sock(t_client **clients, int sockfd)
 		return ;
 	}
 	client = new_client(clients, clifd);
-	if ((response = malloc(sizeof(t_response))))
+	if ((response = malloc(sizeof(*response))))
 		send_to_client(client, response, HELLO_MESSAGE, sizeof(HELLO_MESSAGE));
 }
 
