@@ -46,7 +46,6 @@ void send_message(t_client **clients, t_client *client, t_response *message)
 
 void execute_message(t_client **clients, t_client *client, t_response *message)
 {
-	// TODO: commands
 	if (message->buffer[0] == '/')
 		action(clients, client, message);
 	else

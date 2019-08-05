@@ -44,7 +44,7 @@ typedef struct	s_client
 	int				fd;
 	char			nick[NICK_LEN];
 	char			channel[CHANNEL_NAME_LEN];
-	char			buffer[BUFFER_LEN]; // do we need a buffer per client?
+	// char			buffer[BUFFER_LEN]; // do we need a buffer per client?
 	int				queue_len;
 	t_response		*queue[QUEUE_LEN];
 	struct s_client	*next;
