@@ -12,12 +12,16 @@
 
 NAME := client
 CC := gcc
-CFLAGS = -Werror -Wextra -Wall -g
+CFLAGS := -Werror -Wextra -Wall -g
+LIBS = -lncurses -ltinfo
 HPATH = inc/
 CPATH = src/
 OPATH = obj/
 INC = $(addprefix -I , $(HPATH))
-CFILES = main.c
+CFILES =	main.c		\
+			connect.c	\
+			window.c	\
+			getlline.c
 OFILES = $(CFILES:.c=.o)
 HFILES = inc/client.h
 OBJ = $(addprefix $(OPATH), $(OFILES))
@@ -27,11 +31,11 @@ OBJ = $(addprefix $(OPATH), $(OFILES))
 all: $(NAME)
 
 $(NAME): $(OBJ)
-		$(CC) $(OBJ) $(CFLAGS) -o $(NAME)
+		$(CC) $(OBJ) $(LIBS) $(CFLAGS) -o $(NAME)
 
 $(OPATH)%.o: $(CPATH)%.c $(HFILES)
 		mkdir -p $(OPATH)
-		$(CC) -g $(INC) $< -c -o $@
+		$(CC) $(LIBS) -g $(INC) $< -c -o $@
 
 clean:
 		rm -f $(OBJ)

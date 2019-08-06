@@ -2,24 +2,33 @@
 
 int main(int argc, char **argv)
 {
-	char	buffer[BUFFER_SIZE];
-	int		ipv6;
-	int		fd;
+	char buffer[BUFFER_SIZE];
+	int fd;
+	WINDOW *input;
+	WINDOW *screen;
+	int index;
 
+	index = 0;
 	fd = 0;
-	ipv6 = 0;
+	initscr();
 	if (argc > 2)
 	{
+		connect_to_server(&fd, argv[1], argv[2]);
 		printf("mahchie: %s, port: %s\n", argv[1], argv[2]);
 	}
-	(void)argc;
-	(void)argv;
-	bzero(buffer, sizeof(buffer));
-	// write(1, "Hello world: ", 13);
-	// printf("Hello world!: ");
-	// fflush(stdin);
-	// fgets(buffer, BUFFER_SIZE, stdin);
-	// read(0, buffer, BUFFER_SIZE);
-	// printf("input : %s\n", buffer);
+	display(&screen, &input);
+	// testing the ncurses lib
+	while (true)
+	{
+		bzero(buffer, sizeof(buffer));
+		wclear(input);
+		box(input, 0, 0);
+		wrefresh(input);
+		wgetline(input, buffer, sizeof(buffer) - 1);
+		mvwprintw(screen, index + 1, 2, "%s", buffer);
+		wrefresh(screen);
+		index += 1;
+	}
+	endwin();
 	return (0);
 }
