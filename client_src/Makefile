@@ -13,7 +13,7 @@
 NAME := client
 CC := gcc
 CFLAGS := -Werror -Wextra -Wall -g
-LIBS = -lncurses -ltinfo
+LIBS = $(shell ncurses5.4-config --libs)
 HPATH = inc/
 CPATH = src/
 OPATH = obj/
@@ -35,7 +35,7 @@ $(NAME): $(OBJ)
 
 $(OPATH)%.o: $(CPATH)%.c $(HFILES)
 		mkdir -p $(OPATH)
-		$(CC) $(LIBS) -g $(INC) $< -c -o $@
+		$(CC) -g $(INC) $< -c -o $@
 
 clean:
 		rm -f $(OBJ)

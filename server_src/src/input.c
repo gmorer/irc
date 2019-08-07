@@ -67,6 +67,7 @@ void master_sock(t_client **clients, int sockfd)
 		error("accept :");
 		return ;
 	}
+	printf("new client!\n");
 	client = new_client(clients, clifd);
 	if ((response = malloc(sizeof(*response))))
 		send_to_client(client, response, HELLO_MESSAGE, sizeof(HELLO_MESSAGE));
