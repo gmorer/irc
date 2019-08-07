@@ -56,6 +56,5 @@ int rm_client(t_client **head, t_client *client)
 	}
 	remove_client(client);
 	free(client);
-	printf("after remove: ");
 	return (1);
 }
