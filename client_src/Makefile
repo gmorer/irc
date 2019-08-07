@@ -13,15 +13,13 @@
 NAME := client
 CC := gcc
 CFLAGS := -Werror -Wextra -Wall -g
-LIBS = $(shell ncurses5.4-config --libs)
 HPATH = inc/
 CPATH = src/
 OPATH = obj/
 INC = $(addprefix -I , $(HPATH))
 CFILES =	main.c		\
 			connect.c	\
-			window.c	\
-			getlline.c
+			screen.c
 OFILES = $(CFILES:.c=.o)
 HFILES = inc/client.h
 OBJ = $(addprefix $(OPATH), $(OFILES))
@@ -31,7 +29,7 @@ OBJ = $(addprefix $(OPATH), $(OFILES))
 all: $(NAME)
 
 $(NAME): $(OBJ)
-		$(CC) $(OBJ) $(LIBS) $(CFLAGS) -o $(NAME)
+		$(CC) $(OBJ) $(CFLAGS) -o $(NAME)
 
 $(OPATH)%.o: $(CPATH)%.c $(HFILES)
 		mkdir -p $(OPATH)
