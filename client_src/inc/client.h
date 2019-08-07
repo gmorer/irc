@@ -16,6 +16,10 @@
 #define CLEAR "\033c"
 #define INVALID_ADDR "Invalid address.\n"
 #define BUFFER_SIZE 4096
+#define RED "\033[0;31m"
+#define BLUE "\033[0;34m"
+#define DFLT "\033[0m"
+#define BOLD "\033[1m"
 #define gotoxy(x,y) printf("\033[%d;%dH", (y), (x))
 
 typedef struct	s_norme
@@ -38,6 +42,7 @@ int connect_to_server(int *fd, char *hostname, char *portstr);
 void drawline(int y, int width);
 void clearline(int y, int width);
 void clear(void);
+void put_str(char *str);
 
 /* command.c */
 int howmuchline(char *str);

@@ -8,7 +8,7 @@ void window(t_norme *norme)
 	clear();
 	while (i < norme->mem_index && norme->screen[i])
 	{
-		printf("%s", norme->screen[i]);
+		put_str(norme->screen[i]);
 		i += 1;
 	}
 	write(1, "\n", 1);
@@ -75,12 +75,12 @@ int main(int argc, char **argv)
 	if (argc > 2)
 	{
 		if (!connect_to_server(&(norme.fd), argv[1], argv[2]))
-			printf("Cannot connect to %s:%s", argv[1], argv[2]);
+			add_to_screen(&norme, "! Not connected !\n");
 		else
-			printf("Successfully connected to %s:%s", argv[1], argv[2]);
+			add_to_screen(&norme, "\033[0;32mConnected !\n");
 	}
 	else
-		printf("Not connected\n");
+		add_to_screen(&norme, "! Not connected !\n");
 	loop(&norme);
 	return (0);
 }

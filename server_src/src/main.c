@@ -54,7 +54,6 @@ int main(int argc, char **argv)
 			isipv6 = 1;
 		argc -= 1;
 	}
-	printf("is ipv6: %d\n", isipv6);
 	if ((sockfd = init_server(isipv6)) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	printf("listening on port %d\n", PORT);
