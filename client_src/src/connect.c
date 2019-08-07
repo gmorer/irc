@@ -38,7 +38,7 @@ int connect_to_server(int *fd, char *hostname, char *portstr)
 			break ;
 		}
 		close(*fd);
-		fd = 0;
+		*fd = 0;
 		tmp = tmp->ai_next;
 	}
 	freeaddrinfo(result);
