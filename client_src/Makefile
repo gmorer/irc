@@ -19,7 +19,8 @@ OPATH = obj/
 INC = $(addprefix -I , $(HPATH))
 CFILES =	main.c		\
 			connect.c	\
-			screen.c
+			screen.c	\
+			command.c
 OFILES = $(CFILES:.c=.o)
 HFILES = inc/client.h
 OBJ = $(addprefix $(OPATH), $(OFILES))

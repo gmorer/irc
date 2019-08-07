@@ -18,6 +18,19 @@
 #define BUFFER_SIZE 4096
 #define gotoxy(x,y) printf("\033[%d;%dH", (y), (x))
 
+typedef struct	s_norme
+{
+	char	**screen;
+	int		height;
+	int		width;
+	int		fd;
+	int		mem_index;
+	int		scr_index;
+}				t_norme;
+
+/* main */
+void add_to_screen(t_norme *norme, char *str);
+
 /* connect.c */
 int connect_to_server(int *fd, char *hostname, char *portstr);
 
@@ -25,5 +38,11 @@ int connect_to_server(int *fd, char *hostname, char *portstr);
 void drawline(int y, int width);
 void clearline(int y, int width);
 void clear(void);
+
+/* command.c */
+int howmuchline(char *str);
+void ft_connect(t_norme *norme, char *str);
+void ft_disconnect(t_norme *norme);
+void ft_help(t_norme *norme);
 
 #endif

@@ -19,7 +19,6 @@ int connect_to_server(int *fd, char *hostname, char *portstr)
 	ret = getaddrinfo(hostname, portstr, &hints, &result);
 	if (ret != 0 || !result)
 	{
-		printf("Invalid return of getaddrinfo\n");
 		write(2, INVALID_ADDR, sizeof(INVALID_ADDR));
 		return (0);
 	}
@@ -33,10 +32,7 @@ int connect_to_server(int *fd, char *hostname, char *portstr)
 			continue ;
 		}
 		if (connect(*fd, tmp->ai_addr, tmp->ai_addrlen) != -1)
-		{
-			printf("breaked\n");
 			break ;
-		}
 		close(*fd);
 		*fd = 0;
 		tmp = tmp->ai_next;
@@ -44,9 +40,7 @@ int connect_to_server(int *fd, char *hostname, char *portstr)
 	freeaddrinfo(result);
 	if (!tmp) {
 		write(2, INVALID_ADDR, sizeof(INVALID_ADDR));
-		printf("return KO\n");
 		return (0);
     }
-	printf("return OK\n");
 	return (1);
 }

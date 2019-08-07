@@ -1,83 +1,86 @@
 #include "client.h"
 
-void window(int height, int width, int index, char **screen)
+void window(t_norme *norme)
 {
 	int i;
 
 	i = 0;
 	clear();
-	while (i < index && screen[i])
+	while (i < norme->mem_index && norme->screen[i])
 	{
-		printf("%s", screen[i]);
+		printf("%s", norme->screen[i]);
 		i += 1;
 	}
-	drawline(height - 1, width);
-	gotoxy(0, height);
+	write(1, "\n", 1);
+	drawline(norme->height - 1, norme->width);
+	gotoxy(0, norme->height);
 	fflush(stdout);
 }
 
-void add_to_screen(char **screen, char *str, int *index, size_t screen_size)
+void add_to_screen(t_norme *norme, char *str)
 {
-	printf("buffer address:  %p\n", str);
-	screen[*index] = strdup(str);
-	*index += 1;
+	norme->screen[norme->mem_index] = strdup(str);
+	norme->mem_index += 1;
 }
 
-int loop(int *fd, char **screen, int height, int width)
+int loop(t_norme *norme)
 {
-	int		index;
 	char	buffer[BUFFER_SIZE];
 	fd_set	read_fd;
 	int		ret;
 
-	index = 0;
 	while (1)
 	{
-		window(height, width, index, screen);
+		window(norme);
 		bzero(buffer, sizeof(buffer));
 		FD_ZERO(&read_fd);
 		FD_SET(0, &read_fd);
-		if (*fd)
-			FD_SET(*fd, &read_fd);
-		select(*fd + 1, &read_fd, NULL, NULL, NULL);
-		if (*fd && FD_ISSET(*fd, &read_fd))
+		if (norme->fd)
+			FD_SET(norme->fd, &read_fd);
+		select(norme->fd + 1, &read_fd, NULL, NULL, NULL);
+		if (norme->fd && FD_ISSET(norme->fd, &read_fd))
 		{
-			read(*fd, buffer, sizeof(buffer));
-			add_to_screen(screen, buffer, &index, height - 2);
+			read(norme->fd, buffer, sizeof(buffer));
+			add_to_screen(norme, buffer);
 		}
 		else if (FD_ISSET(0, &read_fd))
 		{
 			ret = read(0, buffer, sizeof(buffer));
-			if (*fd)
-				write(*fd, buffer, ret);
+			if (!strncmp(buffer, "/disconnect", sizeof("/disconnect") - 1))
+				ft_disconnect(norme);
+			else if (!strncmp(buffer, "/connect", sizeof("/connect") - 1))
+				ft_connect(norme, buffer);
+			else if (!norme->fd && !strncmp(buffer, "/help", sizeof("/help") - 1))
+				ft_connect(norme, buffer);
+			else if (norme->fd && buffer[1])
+				write(norme->fd, buffer, ret);
 		}
 	}
 }
 
 int main(int argc, char **argv)
 {
-	
-	char			**screen;
 	struct winsize	term;
-	int				fd;
+	t_norme			norme;
 
-	fd = 0;
+	norme.fd = 0;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &term);
-	screen = malloc(sizeof(char*) * (term.ws_row - 2));
-	if (!screen)
+	norme.height = term.ws_row;
+	norme.width = term.ws_col;
+	norme.mem_index = 0;
+	norme.screen = malloc(sizeof(char*) * (term.ws_row - 2));
+	if (!norme.screen)
 		return (1);
-	bzero(screen, sizeof(char*) * (term.ws_row - 2));
+	bzero(norme.screen, sizeof(char*) * (term.ws_row - 2));
 	if (argc > 2)
 	{
-		if (!connect_to_server(&fd, argv[1], argv[2]))
+		if (!connect_to_server(&(norme.fd), argv[1], argv[2]))
 			printf("Cannot connect to %s:%s", argv[1], argv[2]);
 		else
 			printf("Successfully connected to %s:%s", argv[1], argv[2]);
 	}
 	else
-	{
 		printf("Not connected\n");
-	}
-	loop(&fd, screen, term.ws_row, term.ws_col);
+	loop(&norme);
 	return (0);
 }
