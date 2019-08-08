@@ -51,7 +51,7 @@ int loop(t_norme *norme)
 			else if (!strncmp(buffer, "/connect", sizeof("/connect") - 1))
 				ft_connect(norme, buffer);
 			else if (!norme->fd && !strncmp(buffer, "/help", sizeof("/help") - 1))
-				ft_connect(norme, buffer);
+				ft_help(norme);
 			else if (norme->fd && buffer[1])
 				write(norme->fd, buffer, ret);
 		}

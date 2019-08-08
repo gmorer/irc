@@ -121,7 +121,7 @@ int action_who(t_client **clients, t_client *client, t_response *response)
 	int			channel_len;
 	size_t		offset;
 	t_client	*tmp;
-	char		channel_tmp[CHANNEL_NAME_LEN];
+	char		channel_tmp[CHANNEL_NAME_LEN + 1];
 
 	bzero(channel_tmp, sizeof(channel_tmp));
 	command_size = sizeof("/who");
@@ -147,12 +147,8 @@ int action_who(t_client **clients, t_client *client, t_response *response)
 		memcpy(channel_tmp, channel, channel_len);
 	}
 	bzero(response->buffer, sizeof(response->buffer));
-	offset = sizeof("* people in ");
-	memcpy(response->buffer, "* people in ", offset);
-	memcpy(response->buffer + offset, channel_tmp, channel_len);
-	offset += channel_len;
-	memcpy(response->buffer + offset, " : ", 3);
-	offset += 3;
+	offset = snprintf(response->buffer, sizeof(response->buffer), "* people in %s : ", channel_tmp);
+	offset -= 1;
 	tmp = *clients;
 	while (offset < BUFFER_LEN && tmp)
 	{
