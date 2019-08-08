@@ -29,9 +29,11 @@ int loop(t_norme *norme)
 	fd_set	read_fd;
 	int		ret;
 
+	ret = 1;
 	while (1)
 	{
-		window(norme);
+		if (ret)
+			window(norme);
 		bzero(buffer, sizeof(buffer));
 		FD_ZERO(&read_fd);
 		FD_SET(0, &read_fd);
@@ -49,6 +51,8 @@ int loop(t_norme *norme)
 		else if (FD_ISSET(0, &read_fd))
 		{
 			ret = read(0, buffer, sizeof(buffer));
+			if (!ret)
+				continue ;
 			if (!strncmp(buffer, "/disconnect", sizeof("/disconnect") - 1))
 				ft_disconnect(norme);
 			else if (!strncmp(buffer, "/connect", sizeof("/connect") - 1))
