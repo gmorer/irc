@@ -40,8 +40,11 @@ int loop(t_norme *norme)
 		select(norme->fd + 1, &read_fd, NULL, NULL, NULL);
 		if (norme->fd && FD_ISSET(norme->fd, &read_fd))
 		{
-			read(norme->fd, buffer, sizeof(buffer));
-			add_to_screen(norme, buffer);
+			ret = read(norme->fd, buffer, sizeof(buffer));
+			if (!ret)
+				ft_disconnect(norme);
+			else
+				add_to_screen(norme, buffer);
 		}
 		else if (FD_ISSET(0, &read_fd))
 		{
