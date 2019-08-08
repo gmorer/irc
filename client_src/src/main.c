@@ -6,7 +6,7 @@
 /*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/08 12:38:43 by gmorer            #+#    #+#             */
-/*   Updated: 2019/08/08 12:44:01 by gmorer           ###   ########.fr       */
+/*   Updated: 2019/08/08 18:01:48 by gmorer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,28 @@ void	window(t_norme *norme)
 
 void	add_to_screen(t_norme *norme, char *str)
 {
+	int index;
+
+	index = 0;
 	norme->screen[norme->mem_index] = strdup(str);
-	norme->mem_index += 1;
+	if (norme->mem_index >= norme->height - 2)
+	{
+		free(norme->screen[0]);
+		while (index + 1 < norme->mem_index)
+		{
+			norme->screen[index] = norme->screen[index + 1];
+			index += 1;
+		}
+	}
+	else
+		norme->mem_index += 1;
 }
 
 int		get_input(t_norme *norme, char *buffer)
 {
 	int ret;
 
-	ret = read(0, buffer, sizeof(buffer));
+	ret = read(0, buffer, BUFFER_SIZE);
 	if (!ret)
 		return (0);
 	if (!strncmp(buffer, "/disconnect", sizeof("/disconnect") - 1))
