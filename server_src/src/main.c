@@ -1,45 +1,53 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/08/08 15:52:46 by gmorer            #+#    #+#             */
+/*   Updated: 2019/08/08 15:55:37 by gmorer           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "server.h"
 
-int error(char *message)
+int	error(char *message)
 {
 	perror(message);
 	return (EXIT_FAILURE);
 }
 
-int init_server(int isipv6)
+int	init_server(int isipv6)
 {
-	struct sockaddr_in	sockaddrv4;
-	struct sockaddr_in6 sockaddrv6;
+	struct sockaddr_in	addrv4;
+	struct sockaddr_in6 addrv6;
 	int					sockfd;
 
-	sockfd = socket(isipv6 ? AF_INET6 : AF_INET, SOCK_STREAM, 0);
-	if (sockfd == -1)
+	if ((sockfd = socket(isipv6 ? AF_INET6 : AF_INET, SOCK_STREAM, 0)) == -1)
 		return (error("Opening socket: "));
 	if (isipv6)
 	{
-		bzero(&sockaddrv6, sizeof(struct sockaddr_in6));
-		sockaddrv6.sin6_family = AF_INET6;
-		sockaddrv6.sin6_addr = in6addr_any;
-		sockaddrv6.sin6_port = htons(PORT);
-		if (bind(sockfd, (struct sockaddr *)&sockaddrv6, sizeof(sockaddrv6)) == -1)
+		bzero(&addrv6, sizeof(struct sockaddr_in6));
+		addrv6.sin6_family = AF_INET6;
+		addrv6.sin6_addr = in6addr_any;
+		addrv6.sin6_port = htons(PORT);
+		if (bind(sockfd, (struct sockaddr *)&addrv6, sizeof(addrv6)) == -1)
 			return (error("Binding socket: "));
 	}
 	else
 	{
-		bzero(&sockaddrv4, sizeof(struct sockaddr_in));
-		sockaddrv4.sin_family = AF_INET;
-		sockaddrv4.sin_addr.s_addr = htonl(INADDR_ANY);
-		sockaddrv4.sin_port = htons(PORT);
-		if (bind(sockfd, (struct sockaddr *)&sockaddrv4, sizeof(sockaddrv4)) == -1)
+		bzero(&addrv4, sizeof(struct sockaddr_in));
+		addrv4.sin_family = AF_INET;
+		addrv4.sin_addr.s_addr = htonl(INADDR_ANY);
+		addrv4.sin_port = htons(PORT);
+		if (bind(sockfd, (struct sockaddr *)&addrv4, sizeof(addrv4)) == -1)
 			return (error("Binding socket: "));
 	}
-
-	if (listen(sockfd, BACKLOG) == -1)
-		return (error("Listening: "));
-	return (sockfd);
+	return (listen(sockfd, BACKLOG) == -1 ? error("Listening: ") : sockfd);
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	int			sockfd;
 	t_client	*clients;

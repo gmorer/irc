@@ -1,6 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   loop.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/08/08 15:51:57 by gmorer            #+#    #+#             */
+/*   Updated: 2019/08/08 15:52:33 by gmorer           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "server.h"
 
-void fill_fd(t_client **clients, fd_set *readfds, fd_set *writefds, int *nfds)
+void	fill_fd(t_client **clients, fd_set *readfds, fd_set *writefds,
+		int *nfds)
 {
 	t_client *tmp;
 
@@ -16,12 +29,12 @@ void fill_fd(t_client **clients, fd_set *readfds, fd_set *writefds, int *nfds)
 	}
 }
 
-int server_loop(int sockfd, t_client **clients)
+int		server_loop(int sockfd, t_client **clients)
 {
-	fd_set readfds;
-	fd_set writefds;
-	int nfds;
-	int activity;
+	fd_set	readfds;
+	fd_set	writefds;
+	int		nfds;
+	int		activity;
 
 	while (1)
 	{
@@ -35,7 +48,6 @@ int server_loop(int sockfd, t_client **clients)
 			return (error("select: "));
 		output(clients, &writefds, &activity);
 		input(clients, &readfds, &activity, sockfd);
-
 	}
 	return (1);
 }

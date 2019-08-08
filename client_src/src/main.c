@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/08/08 12:38:43 by gmorer            #+#    #+#             */
+/*   Updated: 2019/08/08 12:44:01 by gmorer           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "client.h"
 
-void window(t_norme *norme)
+void	window(t_norme *norme)
 {
 	int i;
 
@@ -13,17 +25,35 @@ void window(t_norme *norme)
 	}
 	write(1, "\n", 1);
 	drawline(norme->height - 1, norme->width);
-	gotoxy(0, norme->height);
+	GOTOXY(0, norme->height);
 	fflush(stdout);
 }
 
-void add_to_screen(t_norme *norme, char *str)
+void	add_to_screen(t_norme *norme, char *str)
 {
 	norme->screen[norme->mem_index] = strdup(str);
 	norme->mem_index += 1;
 }
 
-int loop(t_norme *norme)
+int		get_input(t_norme *norme, char *buffer)
+{
+	int ret;
+
+	ret = read(0, buffer, sizeof(buffer));
+	if (!ret)
+		return (0);
+	if (!strncmp(buffer, "/disconnect", sizeof("/disconnect") - 1))
+		ft_disconnect(norme);
+	else if (!strncmp(buffer, "/connect", sizeof("/connect") - 1))
+		ft_connect(norme, buffer);
+	else if (!norme->fd && !strncmp(buffer, "/help", sizeof("/help") - 1))
+		ft_help(norme);
+	else if (norme->fd && buffer[1])
+		write(norme->fd, buffer, ret);
+	return (1);
+}
+
+int		loop(t_norme *norme)
 {
 	char	buffer[BUFFER_SIZE];
 	fd_set	read_fd;
@@ -42,30 +72,17 @@ int loop(t_norme *norme)
 		select(norme->fd + 1, &read_fd, NULL, NULL, NULL);
 		if (norme->fd && FD_ISSET(norme->fd, &read_fd))
 		{
-			ret = read(norme->fd, buffer, sizeof(buffer));
-			if (!ret)
+			if (!(ret = read(norme->fd, buffer, sizeof(buffer))))
 				ft_disconnect(norme);
 			else
 				add_to_screen(norme, buffer);
 		}
 		else if (FD_ISSET(0, &read_fd))
-		{
-			ret = read(0, buffer, sizeof(buffer));
-			if (!ret)
-				continue ;
-			if (!strncmp(buffer, "/disconnect", sizeof("/disconnect") - 1))
-				ft_disconnect(norme);
-			else if (!strncmp(buffer, "/connect", sizeof("/connect") - 1))
-				ft_connect(norme, buffer);
-			else if (!norme->fd && !strncmp(buffer, "/help", sizeof("/help") - 1))
-				ft_help(norme);
-			else if (norme->fd && buffer[1])
-				write(norme->fd, buffer, ret);
-		}
+			ret = get_input(norme, buffer);
 	}
 }
 
-int main(int argc, char **argv)
+int		main(int argc, char **argv)
 {
 	struct winsize	term;
 	t_norme			norme;

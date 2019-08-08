@@ -1,25 +1,36 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   output.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/08/08 15:55:43 by gmorer            #+#    #+#             */
+/*   Updated: 2019/08/08 15:56:08 by gmorer           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "server.h"
 
-int send_data(t_client *client)
+int	send_data(t_client *client)
 {
 	int			ret;
 	t_response	*response;
 
 	response = client->queue[0];
-	// printf("sending %p for %p\n", response);
 	ret = write(client->fd, response->buffer, response->message_length);
 	if (ret == -1)
 		return (error("write: "));
 	remove_response(response);
 	client->queue_len -= 1;
-	// printf("array addr %p\nnew addr %p\ncopied: %d\n", client->queue, &client->queue[1], sizeof(t_response) * client->queue_len);
-	memcpy(client->queue, &(client->queue[1]), sizeof(t_response) * client->queue_len);
+	memcpy(client->queue, &(client->queue[1]),
+			sizeof(t_response) * client->queue_len);
 	return (1);
 }
 
-int output(t_client **clients, fd_set *writefs, int *activity)
+int	output(t_client **clients, fd_set *writefs, int *activity)
 {
-	t_client *tmp;
+	t_client	*tmp;
 
 	tmp = *clients;
 	while (*activity && tmp)

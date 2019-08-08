@@ -1,27 +1,30 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   connect.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/08/08 12:28:31 by gmorer            #+#    #+#             */
+/*   Updated: 2019/08/08 12:53:19 by gmorer           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "client.h"
 
-int connect_to_server(int *fd, char *hostname, char *portstr)
+void	init_hints(struct addrinfo *hints)
 {
-	int				ret;
-	struct addrinfo	*result;
-	struct addrinfo *tmp;
-	struct addrinfo hints;
-
 	bzero(&hints, sizeof(hints));
-	hints.ai_family = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_protocol = 0;
-	hints.ai_flags = 0;
-	result = NULL;
-	if (*fd)
-		close(*fd);
-	*fd = 0;
-	ret = getaddrinfo(hostname, portstr, &hints, &result);
-	if (ret != 0 || !result)
-	{
-		write(2, INVALID_ADDR, sizeof(INVALID_ADDR));
-		return (0);
-	}
+	hints->ai_family = AF_UNSPEC;
+	hints->ai_socktype = SOCK_STREAM;
+	hints->ai_protocol = 0;
+	hints->ai_flags = 0;
+}
+
+int		looop(struct addrinfo *result, int *fd)
+{
+	struct addrinfo *tmp;
+
 	tmp = result;
 	while (tmp)
 	{
@@ -37,10 +40,32 @@ int connect_to_server(int *fd, char *hostname, char *portstr)
 		*fd = 0;
 		tmp = tmp->ai_next;
 	}
-	freeaddrinfo(result);
-	if (!tmp) {
+	return (tmp ? 1 : 0);
+}
+
+int		connect_to_server(int *fd, char *hostname, char *portstr)
+{
+	int				ret;
+	struct addrinfo	*result;
+	struct addrinfo hints;
+
+	init_hints(&hints);
+	result = NULL;
+	if (*fd)
+		close(*fd);
+	*fd = 0;
+	ret = getaddrinfo(hostname, portstr, &hints, &result);
+	if (ret != 0 || !result)
+	{
 		write(2, INVALID_ADDR, sizeof(INVALID_ADDR));
 		return (0);
-    }
+	}
+	ret = looop(result, fd);
+	freeaddrinfo(result);
+	if (!ret)
+	{
+		write(2, INVALID_ADDR, sizeof(INVALID_ADDR));
+		return (0);
+	}
 	return (1);
 }

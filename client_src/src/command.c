@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   command.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/08/08 12:26:10 by gmorer            #+#    #+#             */
+/*   Updated: 2019/08/08 12:36:02 by gmorer           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "client.h"
 
-int howmuchline(char *str)
+int		howmuchline(char *str)
 {
 	int index;
 	int count;
@@ -16,7 +28,7 @@ int howmuchline(char *str)
 	return (count);
 }
 
-void get_args(char *str, size_t len, char **args1, char **args2)
+void	get_args(char *str, size_t len, char **args1, char **args2)
 {
 	int i;
 
@@ -43,7 +55,7 @@ void get_args(char *str, size_t len, char **args1, char **args2)
 		str[i] = 0;
 }
 
-void ft_disconnect(t_norme *norme)
+void	ft_disconnect(t_norme *norme)
 {
 	if (!norme->fd)
 	{
@@ -55,24 +67,24 @@ void ft_disconnect(t_norme *norme)
 	add_to_screen(norme, "Successfully disconnected!\n");
 }
 
-void ft_connect(t_norme *norme, char *str)
+void	ft_connect(t_norme *norme, char *str)
 {
 	char *hostname;
 	char *portstr;
 
 	hostname = NULL;
 	portstr = NULL;
-	
 	get_args(str, BUFFER_SIZE, &hostname, &portstr);
 	if (!portstr || !hostname)
-		add_to_screen(norme, "!Invalid argument, usage:  ./connect hostname port\n");
+		add_to_screen(norme,
+				"!Invalid argument, usage:  ./connect hostname port\n");
 	else if (connect_to_server(&(norme->fd), hostname, portstr))
 		add_to_screen(norme, "Successfully connected!\n");
 	else
 		add_to_screen(norme, "!Error during the connection\n");
 }
 
-void ft_help(t_norme *norme)
+void	ft_help(t_norme *norme)
 {
-	add_to_screen(norme, "List of the commands:\n/connect [hostname] [port]: connect to a server\n/disconnect: disconnect from a server\n");
+	add_to_screen(norme, HELP_STR);
 }

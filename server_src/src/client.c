@@ -1,11 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/08/08 15:47:47 by gmorer            #+#    #+#             */
+/*   Updated: 2019/08/08 15:48:35 by gmorer           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "server.h"
 
-// TODO: Do a circular list for perf
-
-t_client *new_client(t_client **head, int fd)
+t_client	*new_client(t_client **head, int fd)
 {
 	t_client	*client;
-	
+
 	client = malloc(sizeof(*client));
 	if (!client)
 		return (0);
@@ -24,7 +34,7 @@ t_client *new_client(t_client **head, int fd)
 	return (client);
 }
 
-void remove_client(t_client *client)
+void		remove_client(t_client *client)
 {
 	int index;
 
@@ -36,10 +46,10 @@ void remove_client(t_client *client)
 	{
 		remove_response(client->queue[index]);
 		index += 1;
-	}	
+	}
 }
 
-int rm_client(t_client **head, t_client *client)
+int			rm_client(t_client **head, t_client *client)
 {
 	if (client->previous && *head != client)
 		client->previous->next = client->next;

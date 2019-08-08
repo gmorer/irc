@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   input.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/08/08 15:49:06 by gmorer            #+#    #+#             */
+/*   Updated: 2019/08/08 15:51:44 by gmorer           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "server.h"
 
-t_response *get_input(t_client **clients, t_client *client)
+t_response	*get_input(t_client **clients, t_client *client)
 {
 	t_response	*new;
 	int			ret;
@@ -15,7 +27,7 @@ t_response *get_input(t_client **clients, t_client *client)
 	if (!(new = malloc(sizeof(*new))))
 		return (0);
 	bzero(new, sizeof(*new));
-	if (ret == 0) // sometime it's not trigered
+	if (ret == 0)
 	{
 		new->message_length = snprintf(new->buffer, sizeof(new->buffer),
 			"* %s as disconnected.\n", client->nick);
@@ -25,34 +37,33 @@ t_response *get_input(t_client **clients, t_client *client)
 		return (NULL);
 	}
 	memcpy(new->buffer, buffer, ret);
-	new->message_length = MIN(ret, BUFFER_LEN - 11); // 11: nick len + ": " len
+	new->message_length = MIN(ret, BUFFER_LEN - 11);
 	return (new);
 }
 
-// this fonction does not send message,  it just put the message in the queue
-void send_message(t_client **clients, t_client *client, t_response *message)
+void		send_message(t_client **clients, t_client *client, t_response *msg)
 {
-	t_client *tmp;
-	size_t	nick_len;
+	t_client	*tmp;
+	size_t		nick_len;
 
 	nick_len = strnlen(client->nick, 9);
 	tmp = (*clients);
-	memcpy(message->buffer + nick_len + 2, message->buffer, message->message_length);
-	memcpy(message->buffer, client->nick, nick_len);
-	memcpy(message->buffer + nick_len, ": ", 2);
-	message->message_length += nick_len + 2;
-	send_to_channel(clients, client->channel, message);
+	memcpy(msg->buffer + nick_len + 2, msg->buffer, msg->message_length);
+	memcpy(msg->buffer, client->nick, nick_len);
+	memcpy(msg->buffer + nick_len, ": ", 2);
+	msg->message_length += nick_len + 2;
+	send_to_channel(clients, client->channel, msg);
 }
 
-void execute_message(t_client **clients, t_client *client, t_response *message)
+void		execute_message(t_client **clients, t_client *cli, t_response *msg)
 {
-	if (message->buffer[0] == '/')
-		action(clients, client, message);
+	if (msg->buffer[0] == '/')
+		action(clients, cli, msg);
 	else
-		send_message(clients, client, message);
+		send_message(clients, cli, msg);
 }
 
-void master_sock(t_client **clients, int sockfd)
+void		master_sock(t_client **clients, int sockfd)
 {
 	t_client			*client;
 	t_response			*response;
@@ -69,7 +80,7 @@ void master_sock(t_client **clients, int sockfd)
 		send_to_client(client, response, HELLO_MESSAGE, sizeof(HELLO_MESSAGE));
 }
 
-int input(t_client **clients, fd_set *readfs, int *activity, int sockfd)
+int			input(t_client **clients, fd_set *readfs, int *activity, int sockfd)
 {
 	t_client	*tmp;
 	t_response	*message;

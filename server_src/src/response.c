@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   response.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/08/08 15:56:21 by gmorer            #+#    #+#             */
+/*   Updated: 2019/08/08 15:57:42 by gmorer           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "server.h"
 
-int remove_response(t_response *response)
+int		remove_response(t_response *response)
 {
 	response->activity -= 1;
 	if (response->activity > 0)
@@ -9,7 +21,7 @@ int remove_response(t_response *response)
 	return (1);
 }
 
-int add_to_queue(t_client *client, t_response *response)
+int		add_to_queue(t_client *client, t_response *response)
 {
 	int index;
 
@@ -25,7 +37,7 @@ int add_to_queue(t_client *client, t_response *response)
 	return (1);
 }
 
-void set_message(t_response *response, char *message, size_t message_len)
+void	set_message(t_response *response, char *message, size_t message_len)
 {
 	bzero(response->buffer, sizeof(response->buffer));
 	memcpy(response->buffer, message, message_len);
@@ -33,9 +45,9 @@ void set_message(t_response *response, char *message, size_t message_len)
 	response->activity = 0;
 }
 
-int send_to_channel(t_client **clients, char *channel, t_response *message)
+int		send_to_channel(t_client **clients, char *channel, t_response *message)
 {
-	t_client *tmp;
+	t_client	*tmp;
 
 	tmp = (*clients);
 	message->activity = 0;
@@ -55,9 +67,9 @@ int send_to_channel(t_client **clients, char *channel, t_response *message)
 	return (1);
 }
 
-int send_to_client(t_client *client, t_response *response, char *msg, size_t msg_len)
+int		send_to_client(t_client *cli, t_response *resp, char *msg, size_t len)
 {
-	set_message(response, msg, msg_len);
-	add_to_queue(client, response);
+	set_message(resp, msg, len);
+	add_to_queue(cli, resp);
 	return (0);
 }
