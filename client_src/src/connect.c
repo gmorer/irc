@@ -6,7 +6,7 @@
 /*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/08 12:28:31 by gmorer            #+#    #+#             */
-/*   Updated: 2019/08/08 12:53:19 by gmorer           ###   ########.fr       */
+/*   Updated: 2019/08/08 17:41:35 by gmorer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	init_hints(struct addrinfo *hints)
 {
-	bzero(&hints, sizeof(hints));
+	bzero(hints, sizeof(*hints));
 	hints->ai_family = AF_UNSPEC;
 	hints->ai_socktype = SOCK_STREAM;
 	hints->ai_protocol = 0;
