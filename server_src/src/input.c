@@ -6,7 +6,7 @@
 /*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/08 15:49:06 by gmorer            #+#    #+#             */
-/*   Updated: 2019/08/08 15:51:44 by gmorer           ###   ########.fr       */
+/*   Updated: 2019/08/10 11:59:21 by gmorer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ t_response	*get_input(t_client **clients, t_client *client)
 	}
 	if (!(new = malloc(sizeof(*new))))
 		return (0);
-	bzero(new, sizeof(*new));
+	ft_bzero(new, sizeof(*new));
 	if (ret == 0)
 	{
 		new->message_length = snprintf(new->buffer, sizeof(new->buffer),
@@ -36,7 +36,7 @@ t_response	*get_input(t_client **clients, t_client *client)
 		send_to_channel(clients, "general", new);
 		return (NULL);
 	}
-	memcpy(new->buffer, buffer, ret);
+	ft_memcpy(new->buffer, buffer, ret);
 	new->message_length = MIN(ret, BUFFER_LEN - 11);
 	return (new);
 }
@@ -46,11 +46,11 @@ void		send_message(t_client **clients, t_client *client, t_response *msg)
 	t_client	*tmp;
 	size_t		nick_len;
 
-	nick_len = strnlen(client->nick, 9);
+	nick_len = ft_strlen(client->nick);
 	tmp = (*clients);
-	memcpy(msg->buffer + nick_len + 2, msg->buffer, msg->message_length);
-	memcpy(msg->buffer, client->nick, nick_len);
-	memcpy(msg->buffer + nick_len, ": ", 2);
+	ft_memmove(msg->buffer + nick_len + 2, msg->buffer, msg->message_length);
+	ft_memcpy(msg->buffer, client->nick, nick_len);
+	ft_memcpy(msg->buffer + nick_len, ": ", 2);
 	msg->message_length += nick_len + 2;
 	send_to_channel(clients, client->channel, msg);
 }

@@ -6,7 +6,7 @@
 /*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/08 12:57:56 by gmorer            #+#    #+#             */
-/*   Updated: 2019/08/08 16:00:08 by gmorer           ###   ########.fr       */
+/*   Updated: 2019/08/10 11:06:53 by gmorer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdio.h>
+# include "libft.h"
 
 # define HELLO_MESSAGE "* Hello on the irc /help for help\n"
 

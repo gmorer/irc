@@ -6,7 +6,7 @@
 /*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/08 13:28:29 by gmorer            #+#    #+#             */
-/*   Updated: 2019/08/08 13:37:31 by gmorer           ###   ########.fr       */
+/*   Updated: 2019/08/10 11:10:12 by gmorer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ char	*next_word(char *str, int len, int *word_len)
 
 int		action_leave(t_client **clients, t_client *client, t_response *response)
 {
-	bzero(client->channel, sizeof(client->channel));
+	ft_bzero(client->channel, sizeof(client->channel));
 	return (send_to_client(client, response, HELLO_MESSAGE,
 				sizeof(HELLO_MESSAGE)));
 }
@@ -43,23 +43,23 @@ int		action_list(t_client **clients, t_client *client, t_response *response)
 	char		bff[CHANNEL_NAME_LEN + 2];
 	int			off;
 
-	bzero(response, sizeof(*response));
+	ft_bzero(response, sizeof(*response));
 	tmp = *clients;
 	while (tmp)
 	{
 		if (tmp->channel[0] && (off = snprintf(bff, sizeof(bff),
 						" %s ", tmp->channel)))
 			if (off + response->message_length < sizeof(response->buffer) &&
-					!strnstr(response->buffer, bff, off))
+					!ft_strnstr(response->buffer, bff, off))
 			{
-				strcpy(response->buffer + response->message_length, bff);
+				ft_strcpy(response->buffer + response->message_length, bff);
 				response->message_length += off - 1;
 			}
 		tmp = tmp->next;
 	}
 	if (!response->message_length &&
 			(response->message_length = sizeof(ERR_NO_CHANNEL)))
-		strcpy(response->buffer, ERR_NO_CHANNEL);
+		ft_strcpy(response->buffer, ERR_NO_CHANNEL);
 	else if (response->message_length + 1 < sizeof(response->buffer))
 		response->buffer[response->message_length++] = '\n';
 	add_to_queue(client, response);
@@ -82,8 +82,8 @@ int		action(t_client **clients, t_client *client, t_response *message)
 	index = 0;
 	while (index < len)
 	{
-		if (!strncmp(actions[index].action_name, message->buffer + 1,
-					strlen(actions[index].action_name)))
+		if (!ft_strncmp(actions[index].action_name, message->buffer + 1,
+					ft_strlen(actions[index].action_name)))
 			return (actions[index].action(clients, client, message));
 		index += 1;
 	}

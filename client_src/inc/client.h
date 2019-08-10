@@ -6,7 +6,7 @@
 /*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/08 12:22:33 by gmorer            #+#    #+#             */
-/*   Updated: 2019/08/08 12:52:36 by gmorer           ###   ########.fr       */
+/*   Updated: 2019/08/10 10:59:16 by gmorer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <strings.h>
 # include <stdlib.h>
 # include <netdb.h>
+# include "libft.h"
 
 # define HELP_STR_1		"Commands:\n/connect [hostname] [port]: connect"
 # define HELP_STR_2		"to a server\n/disconnect: disconnect from a server\n"

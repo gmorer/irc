@@ -6,7 +6,7 @@
 /*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/08 12:54:33 by gmorer            #+#    #+#             */
-/*   Updated: 2019/08/08 12:55:59 by gmorer           ###   ########.fr       */
+/*   Updated: 2019/08/10 11:31:22 by gmorer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,20 +22,20 @@ void	put_str(char *str)
 	int		len;
 	char	*res;
 
-	len = strlen(str);
+	len = ft_strlen(str);
 	res = 0;
 	if (str[0] == '!')
 		write(1, RED, sizeof(RED) - 1);
 	else if (str[0] == '*')
 		write(1, BLUE, sizeof(BLUE) - 1);
-	else if ((res = strchr(str, ':')))
+	else if ((res = ft_strchr(str, ':')))
 		write(1, BOLD, sizeof(BOLD) - 1);
 	if (res)
 	{
 		write(1, str, res - str + 1);
 		write(1, DFLT, sizeof(DFLT) - 1);
 		str = res + 1;
-		len = strlen(str);
+		len = ft_strlen(str);
 	}
 	write(1, str, len);
 	write(1, DFLT, sizeof(DFLT) - 1);

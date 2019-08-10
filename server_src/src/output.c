@@ -6,7 +6,7 @@
 /*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/08 15:55:43 by gmorer            #+#    #+#             */
-/*   Updated: 2019/08/08 15:56:08 by gmorer           ###   ########.fr       */
+/*   Updated: 2019/08/10 11:13:10 by gmorer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	send_data(t_client *client)
 		return (error("write: "));
 	remove_response(response);
 	client->queue_len -= 1;
-	memcpy(client->queue, &(client->queue[1]),
+	ft_memcpy(client->queue, &(client->queue[1]),
 			sizeof(t_response) * client->queue_len);
 	return (1);
 }

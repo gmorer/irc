@@ -6,7 +6,7 @@
 /*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/08 12:38:43 by gmorer            #+#    #+#             */
-/*   Updated: 2019/08/10 10:39:26 by gmorer           ###   ########.fr       */
+/*   Updated: 2019/08/10 11:30:21 by gmorer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	add_to_screen(t_norme *norme, char *str)
 	int index;
 
 	index = 0;
-	norme->screen[norme->mem_index] = strdup(str);
+	norme->screen[norme->mem_index] = ft_strdup(str);
 	if (norme->mem_index == norme->height - 2)
 	{
 		free(norme->screen[0]);
@@ -55,11 +55,11 @@ int		get_input(t_norme *norme, char *buffer)
 	ret = read(0, buffer, BUFFER_SIZE);
 	if (!ret)
 		return (0);
-	if (!strncmp(buffer, "/disconnect", sizeof("/disconnect") - 1))
+	if (!ft_strncmp(buffer, "/disconnect", sizeof("/disconnect") - 1))
 		ft_disconnect(norme);
-	else if (!strncmp(buffer, "/connect", sizeof("/connect") - 1))
+	else if (!ft_strncmp(buffer, "/connect", sizeof("/connect") - 1))
 		ft_connect(norme, buffer);
-	else if (!norme->fd && !strncmp(buffer, "/help", sizeof("/help") - 1))
+	else if (!norme->fd && !ft_strncmp(buffer, "/help", sizeof("/help") - 1))
 		ft_help(norme);
 	else if (norme->fd && buffer[1])
 		write(norme->fd, buffer, ret);
@@ -77,7 +77,7 @@ int		loop(t_norme *norme)
 	{
 		if (ret)
 			window(norme);
-		bzero(buffer, sizeof(buffer));
+		ft_bzero(buffer, sizeof(buffer));
 		FD_ZERO(&read_fd);
 		FD_SET(0, &read_fd);
 		if (norme->fd)
@@ -108,7 +108,7 @@ int		main(int argc, char **argv)
 	norme.screen = malloc(sizeof(char*) * (term.ws_row - 2));
 	if (!norme.screen)
 		return (1);
-	bzero(norme.screen, sizeof(char*) * (term.ws_row - 2));
+	ft_bzero(norme.screen, sizeof(char*) * (term.ws_row - 2));
 	if (argc > 2)
 	{
 		if (!connect_to_server(&(norme.fd), argv[1], argv[2]))

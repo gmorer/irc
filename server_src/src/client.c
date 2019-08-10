@@ -6,7 +6,7 @@
 /*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/08 15:47:47 by gmorer            #+#    #+#             */
-/*   Updated: 2019/08/08 15:48:35 by gmorer           ###   ########.fr       */
+/*   Updated: 2019/08/10 11:10:32 by gmorer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ t_client	*new_client(t_client **head, int fd)
 	client = malloc(sizeof(*client));
 	if (!client)
 		return (0);
-	bzero(client, sizeof(*client));
+	ft_bzero(client, sizeof(*client));
 	client->fd = fd;
-	strcpy(client->nick, DEFAULT_NICK);
+	ft_strcpy(client->nick, DEFAULT_NICK);
 	if (!(*head))
 	{
 		*head = client;

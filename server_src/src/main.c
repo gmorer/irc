@@ -6,7 +6,7 @@
 /*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/08 15:52:46 by gmorer            #+#    #+#             */
-/*   Updated: 2019/08/08 15:55:37 by gmorer           ###   ########.fr       */
+/*   Updated: 2019/08/10 11:12:48 by gmorer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	init_server(int isipv6)
 		return (error("Opening socket: "));
 	if (isipv6)
 	{
-		bzero(&addrv6, sizeof(struct sockaddr_in6));
+		ft_bzero(&addrv6, sizeof(struct sockaddr_in6));
 		addrv6.sin6_family = AF_INET6;
 		addrv6.sin6_addr = in6addr_any;
 		addrv6.sin6_port = htons(PORT);
@@ -37,7 +37,7 @@ int	init_server(int isipv6)
 	}
 	else
 	{
-		bzero(&addrv4, sizeof(struct sockaddr_in));
+		ft_bzero(&addrv4, sizeof(struct sockaddr_in));
 		addrv4.sin_family = AF_INET;
 		addrv4.sin_addr.s_addr = htonl(INADDR_ANY);
 		addrv4.sin_port = htons(PORT);
@@ -58,7 +58,7 @@ int	main(int argc, char **argv)
 	argc -= 1;
 	while (argc)
 	{
-		if (!strcmp(argv[argc], "-ipv6"))
+		if (!ft_strcmp(argv[argc], "-ipv6"))
 			isipv6 = 1;
 		argc -= 1;
 	}
