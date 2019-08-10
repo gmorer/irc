@@ -6,7 +6,7 @@
 /*   By: gmorer <gmorer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/08 12:38:43 by gmorer            #+#    #+#             */
-/*   Updated: 2019/08/08 18:01:48 by gmorer           ###   ########.fr       */
+/*   Updated: 2019/08/10 10:39:26 by gmorer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,10 @@ void	add_to_screen(t_norme *norme, char *str)
 
 	index = 0;
 	norme->screen[norme->mem_index] = strdup(str);
-	if (norme->mem_index >= norme->height - 2)
+	if (norme->mem_index == norme->height - 2)
 	{
 		free(norme->screen[0]);
-		while (index + 1 < norme->mem_index)
+		while (index < norme->mem_index)
 		{
 			norme->screen[index] = norme->screen[index + 1];
 			index += 1;
